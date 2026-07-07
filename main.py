@@ -60,10 +60,12 @@ def main():
         
     results = []
     
-    # Process tasks sequentially to ensure we don't hit aggressive rate limits
-    # and since we want to be as robust as possible.
-    for task in tasks:
-        results.append(process_task(client, model_id, task))
+    # Process tasks concurrently to ensure we finish within the 10-minute limit.
+    # We use a reasonable max_workers to avoid hitting rate limits too aggressively.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(process_task, client, model_id, task) for task in tasks]
+        for future in concurrent.futures.as_completed(futures):
+            results.append(future.result())
         
     try:
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
