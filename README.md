@@ -1,6 +1,6 @@
-# AMD Developer Hackathon: AI Agent Submission
+# OmniSolve Agent: Efficient Multi-Domain AI
 
-This repository contains a general-purpose AI agent built for the AMD Developer Hackathon. The agent utilizes the Fireworks AI API to handle various natural language tasks across 8 different domains ranging from factual knowledge and summarization to code debugging and logical reasoning.
+OmniSolve is a high-performance, containerized AI agent built for the AMD Developer Hackathon. It leverages Fireworks AI to efficiently tackle natural language tasks across 8 diverse domains, including math, coding, and logical reasoning, optimizing for token efficiency and accuracy.
 
 ## Requirements
 
@@ -47,9 +47,9 @@ python main.py
 
 To accurately simulate how the hackathon evaluation harness will execute your agent, build and run the Docker container.
 
-1. **Build the image:**
+1. **Build the image (Requires linux/amd64 platform):**
    ```bash
-   docker build -t amd-agent:latest .
+   docker buildx build --platform linux/amd64 -t amd-agent:latest .
    ```
 
 2. **Run the container:**
@@ -66,3 +66,4 @@ To accurately simulate how the hackathon evaluation harness will execute your ag
 - **Token Efficiency First**: The agent intentionally avoids using a system prompt. It directly forwards the user's prompt to the LLM to minimize token consumption and maximize the token efficiency ranking.
 - **Accuracy Optimization**: The LLM `temperature` parameter is strictly set to `0.0`. This ensures deterministic outputs which is critically important for mathematical reasoning, logical deduction, and code debugging tasks.
 - **Lightweight Architecture**: The Docker image uses `python:3.11-slim`, significantly reducing the image size to remain well beneath the 10GB restriction, allowing for extremely fast pull and start times.
+- **Concurrent Processing**: To ensure the agent finishes within the strict 10-minute timeout for a large number of tasks, it utilizes `concurrent.futures.ThreadPoolExecutor` to process up to 10 tasks in parallel.
